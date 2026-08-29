@@ -7,6 +7,8 @@ interface PasswordListProps {
 
 const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [passwords, setPasswords] = useState<PasswordEntry[]>([]);
+
+  const safePasswords = passwords || [];
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,7 +41,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
     }
   };
 
-  const filteredPasswords = passwords.filter(
+  const filteredPasswords = safePasswords.filter(
     (password) =>
       password.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       password.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
