@@ -22,7 +22,7 @@ func Initialize(dbPath string) (*gorm.DB, error) {
 	}
 
 	// Auto-migrate schema
-	if err := db.AutoMigrate(&models.VaultEntry{}); err != nil {
+	if err := db.AutoMigrate(&models.VaultEntry{}, &models.VaultMeta{}); err != nil {
 		return nil, fmt.Errorf("failed to migrate database: %w", err)
 	}
 
