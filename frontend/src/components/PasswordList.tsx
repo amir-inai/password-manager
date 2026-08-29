@@ -18,7 +18,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const loadPasswords = async () => {
     try {
       const data = await passwordsApi.list();
-      setPasswords(data);
+      setPasswords(data || []);
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to load passwords");
     } finally {
