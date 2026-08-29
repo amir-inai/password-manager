@@ -47,6 +47,7 @@ const AppContent: React.FC = () => {
         </div>
 
         <PasswordList
+          key={showForm ? "form-open" : "form-closed"}
           onEdit={(password: any) => {
             setEditingPassword(password);
             setShowForm(true);
@@ -61,6 +62,7 @@ const AppContent: React.FC = () => {
             setShowForm(false);
             setEditingPassword(null);
           }}
+          onSave={() => {}}
         />
       )}
 

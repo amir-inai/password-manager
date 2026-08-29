@@ -4,9 +4,14 @@ import { passwordsApi, PasswordEntry, PasswordRequest } from "../services/api";
 interface PasswordFormProps {
   password: PasswordEntry | null;
   onClose: () => void;
+  onSave?: () => void;
 }
 
-const PasswordForm: React.FC<PasswordFormProps> = ({ password, onClose }) => {
+const PasswordForm: React.FC<PasswordFormProps> = ({
+  password,
+  onClose,
+  onSave,
+}) => {
   const [formData, setFormData] = useState<PasswordRequest>({
     title: "",
     username: "",
@@ -43,6 +48,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({ password, onClose }) => {
       } else {
         await passwordsApi.create(formData);
       }
+      if (onSave) onSave();
       onClose();
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to save password");
