@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"password-manager/backend/internal/database"
 	"password-manager/backend/internal/encryption"
 	"password-manager/backend/internal/models"
 
@@ -52,7 +51,7 @@ func (h *PasswordHandler) List(c *gin.Context) {
 	// Decrypt sensitive fields
 	var response []PasswordResponse
 	for _, entry := range entries {
-		password, err := h.crypto.Decrypt(entry.EncryptedPassword)
+		_, err := h.crypto.Decrypt(entry.EncryptedPassword)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decrypt password"})
 			return

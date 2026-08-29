@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"password-manager/backend/internal/database"
 	"password-manager/backend/internal/encryption"
 	"password-manager/backend/internal/models"
 

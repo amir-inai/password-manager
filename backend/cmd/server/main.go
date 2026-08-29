@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}
-	defer db.Close()
+	defer database.Close(db)
 
 	// Initialize encryption service
 	crypto := encryption.NewService()
