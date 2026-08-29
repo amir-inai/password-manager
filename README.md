@@ -105,20 +105,34 @@ cd ..
 
 ### Running the Application
 
-1. Start the backend server:
+#### Option 1: Using the startup script (Windows)
 
-```bash
-make backend
-# Or manually:
-cd backend && go run cmd/server/main.go
+Double-click `scripts/start.bat` or run it from Command Prompt:
+
+```cmd
+scripts\start.bat
 ```
 
-2. In a new terminal, start the frontend dev server:
+#### Option 2: Using PowerShell
+
+```powershell
+.\scripts\start.ps1
+```
+
+#### Option 3: Manual start (all platforms)
+
+**Terminal 1 - Start Backend:**
 
 ```bash
-make frontend
-# Or manually:
-cd frontend && npm run dev
+cd backend
+go run cmd/server/main.go
+```
+
+**Terminal 2 - Start Frontend:**
+
+```bash
+cd frontend
+npm run dev
 ```
 
 3. Open your browser and navigate to `http://localhost:5173`
