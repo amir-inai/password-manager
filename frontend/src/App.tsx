@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import MasterPassword from "./components/MasterPassword";
 import PasswordList from "./components/PasswordList";
@@ -47,7 +47,7 @@ const AppContent: React.FC = () => {
         </div>
 
         <PasswordList
-          onEdit={(password) => {
+          onEdit={(password: any) => {
             setEditingPassword(password);
             setShowForm(true);
           }}
