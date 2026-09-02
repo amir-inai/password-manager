@@ -15,7 +15,6 @@ export interface PasswordEntry {
   id: number;
   title: string;
   username: string;
-  password?: string;
   url: string;
   notes: string;
   category: string;
@@ -66,9 +65,6 @@ export const authApi = {
 export const passwordsApi = {
   list: (): Promise<PasswordEntry[]> =>
     api.get("/passwords").then((res) => res.data),
-
-  get: (id: number): Promise<PasswordEntry> =>
-    api.get(`/passwords/${id}`).then((res) => res.data),
 
   create: (data: PasswordRequest): Promise<PasswordEntry> =>
     api.post("/passwords", data).then((res) => res.data),

@@ -375,21 +375,6 @@
   margin-top: 1rem;
 }
 
-.generate-password {
-  padding: 0.75rem 1rem;
-  background: #17a2b8;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-
-.generate-password:hover {
-  background: #138496;
-}
-
 .cancel-btn,
 .submit-btn {
   flex: 1;

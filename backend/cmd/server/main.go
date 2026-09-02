@@ -68,7 +68,6 @@ func main() {
 	protectedRoutes.Use(middleware.AuthMiddleware(crypto))
 	{
 		protectedRoutes.GET("/passwords", passwordHandler.List)
-		protectedRoutes.GET("/passwords/:id", passwordHandler.Get)
 		protectedRoutes.POST("/passwords", passwordHandler.Create)
 		protectedRoutes.PUT("/passwords/:id", passwordHandler.Update)
 		protectedRoutes.DELETE("/passwords/:id", passwordHandler.Delete)

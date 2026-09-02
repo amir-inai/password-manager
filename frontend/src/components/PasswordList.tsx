@@ -32,15 +32,6 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
     }
   };
 
-  const handleEdit = async (password: PasswordEntry) => {
-    try {
-      const fullPassword = await passwordsApi.get(password.id);
-      onEdit(fullPassword);
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to load password details");
-    }
-  };
-
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this password?")) {
       return;
@@ -117,10 +108,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
                 >
                   QR
                 </button>
-                <button
-                  onClick={() => handleEdit(password)}
-                  className="edit-btn"
-                >
+                <button onClick={() => onEdit(password)} className="edit-btn">
                   Edit
                 </button>
                 <button

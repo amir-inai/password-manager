@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  passwordsApi,
-  PasswordEntry,
-  PasswordRequest,
-  generatorApi,
-} from "../services/api";
+import { passwordsApi, PasswordEntry, PasswordRequest } from "../services/api";
 
 interface PasswordFormProps {
   password: PasswordEntry | null;
@@ -34,7 +29,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
       setFormData({
         title: password.title,
         username: password.username,
-        password: password.password || "",
+        password: "", // Password is not returned from API for security
         url: password.url,
         notes: password.notes,
         category: password.category,
@@ -66,21 +61,6 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleGenerate = async () => {
-    try {
-      const response = await generatorApi.generate({
-        length: 16,
-        include_uppercase: true,
-        include_lowercase: true,
-        include_numbers: true,
-        include_symbols: true,
-      });
-      setFormData({ ...formData, password: response.password });
-    } catch (err) {
-      console.error("Failed to generate password:", err);
-    }
   };
 
   return (
@@ -123,7 +103,9 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password {password ? "" : "*"}</label>
+            <label htmlFor="password">
+              Password {password ? "(leave blank to keep current)" : "*"}
+            </label>
             <div className="password-input-group">
               <input
                 type={showPassword ? "text" : "password"}
@@ -140,13 +122,6 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
                 className="toggle-password"
               >
                 {showPassword ? "Hide" : "Show"}
-              </button>
-              <button
-                type="button"
-                onClick={handleGenerate}
-                className="generate-password"
-              >
-                Generate
               </button>
             </div>
           </div>
