@@ -29,7 +29,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
       setFormData({
         title: password.title,
         username: password.username,
-        password: "", // Password is not returned from API for security
+        password: password.password || "",
         url: password.url,
         notes: password.notes,
         category: password.category,
@@ -103,9 +103,7 @@ const PasswordForm: React.FC<PasswordFormProps> = ({
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">
-              Password {password ? "(leave blank to keep current)" : "*"}
-            </label>
+            <label htmlFor="password">Password {password ? "" : "*"}</label>
             <div className="password-input-group">
               <input
                 type={showPassword ? "text" : "password"}

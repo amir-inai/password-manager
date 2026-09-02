@@ -34,18 +34,7 @@ type PasswordResponse struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
 	Username    string `json:"username"`
-	URL         string `json:"url"`
-	Notes       string `json:"notes"`
-	Category    string `json:"category"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
-}
-
-type PasswordWithSecretResponse struct {
-	ID          uint   `json:"id"`
-	Title       string `json:"title"`
-	Username    string `json:"username"`
-	Password    string `json:"password"`
+	Password    string `json:"password,omitempty"`
 	URL         string `json:"url"`
 	Notes       string `json:"notes"`
 	Category    string `json:"category"`
@@ -85,42 +74,6 @@ func (h *PasswordHandler) List(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
-}
-
-func (h *PasswordHandler) Get(c *gin.Context) {
-	id := c.Param("id")
-
-	var entry models.VaultEntry
-	if err := h.db.First(&entry, id).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": "Password not found"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-
-	// Decrypt all fields including password
-	password, err := h.crypto.Decrypt(entry.EncryptedPassword)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decrypt password"})
-		return
-	}
-
-	url, _ := h.crypto.Decrypt(entry.EncryptedURL)
-	notes, _ := h.crypto.Decrypt(entry.EncryptedNotes)
-
-	c.JSON(http.StatusOK, PasswordWithSecretResponse{
-		ID:        entry.ID,
-		Title:     entry.Title,
-		Username:  entry.Username,
-		Password:  string(password),
-		URL:       string(url),
-		Notes:     string(notes),
-		Category:  entry.Category,
-		CreatedAt: entry.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt: entry.UpdatedAt.Format("2006-01-02 15:04:05"),
-	})
 }
 
 func (h *PasswordHandler) Create(c *gin.Context) {
@@ -231,6 +184,42 @@ func (h *PasswordHandler) Update(c *gin.Context) {
 		Username:  entry.Username,
 		URL:       req.URL,
 		Notes:     req.Notes,
+		Category:  entry.Category,
+		CreatedAt: entry.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: entry.UpdatedAt.Format("2006-01-02 15:04:05"),
+	})
+}
+
+func (h *PasswordHandler) Get(c *gin.Context) {
+	id := c.Param("id")
+
+	var entry models.VaultEntry
+	if err := h.db.First(&entry, id).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Password not found"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+
+	// Decrypt all fields including password
+	decryptedPassword, err := h.crypto.Decrypt(entry.EncryptedPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decrypt password"})
+		return
+	}
+
+	decryptedURL, _ := h.crypto.Decrypt(entry.EncryptedURL)
+	decryptedNotes, _ := h.crypto.Decrypt(entry.EncryptedNotes)
+
+	c.JSON(http.StatusOK, PasswordResponse{
+		ID:        entry.ID,
+		Title:     entry.Title,
+		Username:  entry.Username,
+		Password:  string(decryptedPassword),
+		URL:       string(decryptedURL),
+		Notes:     string(decryptedNotes),
 		Category:  entry.Category,
 		CreatedAt: entry.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt: entry.UpdatedAt.Format("2006-01-02 15:04:05"),

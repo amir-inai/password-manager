@@ -15,15 +15,12 @@ export interface PasswordEntry {
   id: number;
   title: string;
   username: string;
+  password?: string;
   url: string;
   notes: string;
   category: string;
   created_at: string;
   updated_at: string;
-}
-
-export interface PasswordWithSecret extends PasswordEntry {
-  password: string;
 }
 
 export interface UnlockRequest {
@@ -70,7 +67,7 @@ export const passwordsApi = {
   list: (): Promise<PasswordEntry[]> =>
     api.get("/passwords").then((res) => res.data),
 
-  get: (id: number): Promise<PasswordWithSecret> =>
+  get: (id: number): Promise<PasswordEntry> =>
     api.get(`/passwords/${id}`).then((res) => res.data),
 
   create: (data: PasswordRequest): Promise<PasswordEntry> =>

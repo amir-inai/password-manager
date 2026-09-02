@@ -268,25 +268,6 @@
   background: #5a32a3;
 }
 
-.show-password-btn {
-  margin-left: 8px;
-  padding: 4px 8px;
-  background: #e9ecef;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.75rem;
-}
-
-.show-password-btn:hover:not(:disabled) {
-  background: #d0d0d0;
-}
-
-.show-password-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* Modal */
 .modal-overlay {
   position: fixed;
