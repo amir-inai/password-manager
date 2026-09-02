@@ -13,9 +13,15 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [qrCodePassword, setQrCodePassword] = useState<PasswordEntry | null>(
     null
   );
+
+  // Get unique categories from passwords
+  const categories = Array.from(
+    new Set(safePasswords.map((p) => p.category).filter(Boolean))
+  ) as string[];
 
   useEffect(() => {
     loadPasswords();
@@ -54,12 +60,17 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
     }
   };
 
-  const filteredPasswords = safePasswords.filter(
-    (password) =>
+  const filteredPasswords = safePasswords.filter((password) => {
+    const matchesSearch =
       password.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       password.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      password.category?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      password.category?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      !selectedCategory || password.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
 
   if (loading) {
     return <div className="loading">Loading passwords...</div>;
@@ -71,7 +82,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
 
   return (
     <div className="password-list">
-      <div className="search-bar">
+      <div className="filter-bar">
         <input
           type="text"
           placeholder="Search passwords..."
@@ -79,6 +90,20 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
+        {categories.length > 0 && (
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="category-filter"
+          >
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       {filteredPasswords.length === 0 ? (
