@@ -10,15 +10,8 @@ interface QRCodeModalProps {
 const QRCodeModal: React.FC<QRCodeModalProps> = ({ password, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  // Generate deep link URI for companion app
-  // Format: passwordmanager://login?url=<url>&title=<title>&username=<username>
-  // Note: Password is NOT included in QR for security reasons
-  // The companion app would need to authenticate to access the full credentials
-  const deepLinkUri = `passwordmanager://login?url=${encodeURIComponent(
-    password.url || ""
-  )}&title=${encodeURIComponent(password.title)}&username=${encodeURIComponent(
-    password.username
-  )}`;
+  // Simple URL for QR code - when scanned, opens in browser
+  const qrUrl = password.url || "";
 
   return (
     <div className="modal-overlay">
@@ -31,53 +24,59 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({ password, onClose }) => {
         </div>
 
         <div className="qrcode-content">
-          <div className="qrcode-display">
-            <QRCodeSVG
-              value={deepLinkUri}
-              size={256}
-              level="H"
-              includeMargin={true}
-            />
-          </div>
+          {qrUrl ? (
+            <>
+              <div className="qrcode-display">
+                <QRCodeSVG
+                  value={qrUrl}
+                  size={256}
+                  level="H"
+                  includeMargin={true}
+                />
+              </div>
 
-          <div className="qrcode-info">
-            <p className="qrcode-warning">
-              ⚠️ Scan this QR code with your companion mobile app to quickly
-              access credentials.
-            </p>
+              <div className="qrcode-info">
+                <p className="qrcode-success">
+                  ✅ Scan this QR code to open <strong>{password.title}</strong>{" "}
+                  in your browser.
+                </p>
 
-            <div className="qrcode-details">
-              <p>
-                <strong>Title:</strong> {password.title}
-              </p>
-              <p>
-                <strong>URL:</strong> {password.url || "(not set)"}
-              </p>
-              <p>
-                <strong>Username:</strong>{" "}
-                {showPassword ? password.username : "••••••••"}
-              </p>
-              <p>
-                <strong>Password:</strong> {"••••••••"}
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="toggle-password-btn"
-                  style={{ marginLeft: "8px", padding: "4px 8px" }}
-                >
-                  {showPassword ? "Hide" : "Show"}
-                </button>
+                <div className="qrcode-details">
+                  <p>
+                    <strong>Title:</strong> {password.title}
+                  </p>
+                  <p>
+                    <strong>URL:</strong>{" "}
+                    <a href={qrUrl} target="_blank" rel="noopener noreferrer">
+                      {qrUrl}
+                    </a>
+                  </p>
+                  <p>
+                    <strong>Username:</strong>{" "}
+                    {showPassword ? password.username : "••••••••"}
+                  </p>
+                  <p>
+                    <strong>Password:</strong> {"••••••••"}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="toggle-password-btn"
+                      style={{ marginLeft: "8px", padding: "4px 8px" }}
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="qrcode-info">
+              <p className="qrcode-warning">
+                ⚠️ No URL is set for this password entry. Please add a URL
+                first.
               </p>
             </div>
-
-            <div className="qrcode-uri-info">
-              <small>
-                The QR code contains a deep link URI for:{" "}
-                <code>passwordmanager://</code> protocol. You need a companion
-                mobile app that handles this URI scheme.
-              </small>
-            </div>
-          </div>
+          )}
 
           <div className="form-actions">
             <button onClick={onClose} className="cancel-btn">
@@ -109,6 +108,14 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({ password, onClose }) => {
           gap: 1rem;
         }
 
+        .qrcode-success {
+          background: #d4edda;
+          color: #155724;
+          padding: 0.75rem;
+          border-radius: 6px;
+          font-size: 0.9rem;
+        }
+
         .qrcode-warning {
           background: #fff3cd;
           color: #856404;
@@ -128,17 +135,13 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({ password, onClose }) => {
           color: #333;
         }
 
-        .qrcode-uri-info {
-          color: #666;
-          font-size: 0.85rem;
-          text-align: center;
+        .qrcode-details a {
+          color: #667eea;
+          text-decoration: none;
         }
 
-        .qrcode-uri-info code {
-          background: #e9ecef;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 0.8rem;
+        .qrcode-details a:hover {
+          text-decoration: underline;
         }
 
         .toggle-password-btn {
