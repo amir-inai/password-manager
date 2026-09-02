@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { passwordsApi, PasswordEntry } from "../services/api";
+import QRCodeModal from "./QRCodeModal";
 
 interface PasswordListProps {
   onEdit: (password: PasswordEntry) => void;
@@ -12,6 +13,9 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [qrCodePassword, setQrCodePassword] = useState<PasswordEntry | null>(
+    null
+  );
 
   useEffect(() => {
     loadPasswords();
@@ -98,6 +102,12 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
                 )}
               </div>
               <div className="password-actions">
+                <button
+                  onClick={() => setQrCodePassword(password)}
+                  className="qrcode-btn"
+                >
+                  QR
+                </button>
                 <button onClick={() => onEdit(password)} className="edit-btn">
                   Edit
                 </button>
@@ -111,6 +121,13 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
             </div>
           ))}
         </div>
+      )}
+
+      {qrCodePassword && (
+        <QRCodeModal
+          password={qrCodePassword}
+          onClose={() => setQrCodePassword(null)}
+        />
       )}
     </div>
   );
