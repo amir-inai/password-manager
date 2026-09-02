@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { passwordsApi, PasswordEntry } from "../services/api";
+import {
+  passwordsApi,
+  PasswordEntry,
+  PasswordWithSecret,
+} from "../services/api";
 import QRCodeModal from "./QRCodeModal";
 
 interface PasswordListProps {
@@ -14,6 +18,12 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [qrCodePassword, setQrCodePassword] = useState<PasswordEntry | null>(
+    null
+  );
+  const [visiblePasswords, setVisiblePasswords] = useState<{
+    [key: number]: string;
+  }>({});
+  const [loadingPasswordId, setLoadingPasswordId] = useState<number | null>(
     null
   );
 
@@ -42,6 +52,27 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
       setPasswords(passwords.filter((p) => p.id !== id));
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to delete password");
+    }
+  };
+
+  const togglePasswordVisibility = async (id: number) => {
+    // If already visible, hide it
+    if (visiblePasswords[id]) {
+      const newVisible = { ...visiblePasswords };
+      delete newVisible[id];
+      setVisiblePasswords(newVisible);
+      return;
+    }
+
+    // Otherwise, fetch the password
+    setLoadingPasswordId(id);
+    try {
+      const data: PasswordWithSecret = await passwordsApi.get(id);
+      setVisiblePasswords({ ...visiblePasswords, [id]: data.password });
+    } catch (err: any) {
+      setError(err.response?.data?.error || "Failed to fetch password");
+    } finally {
+      setLoadingPasswordId(null);
     }
   };
 
@@ -89,6 +120,21 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
               <div className="password-body">
                 <p>
                   <strong>Username:</strong> {password.username}
+                </p>
+                <p>
+                  <strong>Password:</strong>{" "}
+                  {loadingPasswordId === password.id
+                    ? "Loading..."
+                    : visiblePasswords[password.id]
+                    ? visiblePasswords[password.id]
+                    : "••••••••"}
+                  <button
+                    onClick={() => togglePasswordVisibility(password.id)}
+                    className="show-password-btn"
+                    disabled={loadingPasswordId === password.id}
+                  >
+                    {visiblePasswords[password.id] ? "Hide" : "Show"}
+                  </button>
                 </p>
                 {password.url && (
                   <p>
