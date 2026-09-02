@@ -13,16 +13,9 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [qrCodePassword, setQrCodePassword] = useState<PasswordEntry | null>(
     null
   );
-  const [copiedId, setCopiedId] = useState<number | null>(null);
-
-  // Get unique categories from passwords
-  const categories = Array.from(
-    new Set(safePasswords.map((p) => p.category).filter(Boolean))
-  ) as string[];
 
   useEffect(() => {
     loadPasswords();
@@ -61,28 +54,12 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
     }
   };
 
-  const handleCopyPassword = async (password: PasswordEntry) => {
-    try {
-      const fullPassword = await passwordsApi.get(password.id);
-      await navigator.clipboard.writeText(fullPassword.password || "");
-      setCopiedId(password.id);
-      setTimeout(() => setCopiedId(null), 2000);
-    } catch (err: any) {
-      setError("Failed to copy password");
-    }
-  };
-
-  const filteredPasswords = safePasswords.filter((password) => {
-    const matchesSearch =
+  const filteredPasswords = safePasswords.filter(
+    (password) =>
       password.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       password.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      password.category?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesCategory =
-      !selectedCategory || password.category === selectedCategory;
-
-    return matchesSearch && matchesCategory;
-  });
+      password.category?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return <div className="loading">Loading passwords...</div>;
@@ -94,7 +71,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
 
   return (
     <div className="password-list">
-      <div className="filter-bar">
+      <div className="search-bar">
         <input
           type="text"
           placeholder="Search passwords..."
@@ -102,20 +79,6 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-input"
         />
-        {categories.length > 0 && (
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="category-filter"
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-        )}
       </div>
 
       {filteredPasswords.length === 0 ? (
@@ -141,14 +104,13 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
                     <strong>URL:</strong> {password.url}
                   </p>
                 )}
+                {password.notes && (
+                  <p>
+                    <strong>Notes:</strong> {password.notes}
+                  </p>
+                )}
               </div>
               <div className="password-actions">
-                <button
-                  onClick={() => handleCopyPassword(password)}
-                  className="copy-btn"
-                >
-                  {copiedId === password.id ? "Copied!" : "Copy"}
-                </button>
                 <button
                   onClick={() => setQrCodePassword(password)}
                   className="qrcode-btn"
