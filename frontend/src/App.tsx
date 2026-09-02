@@ -3,14 +3,12 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import MasterPassword from "./components/MasterPassword";
 import PasswordList from "./components/PasswordList";
 import PasswordForm from "./components/PasswordForm";
-import PasswordGenerator from "./components/PasswordGenerator";
 import "./App.css";
 
 const AppContent: React.FC = () => {
   const { isUnlocked, isLoading, error, unlock, lock } = useAuth();
   const [showForm, setShowForm] = useState(false);
   const [editingPassword, setEditingPassword] = useState<any>(null);
-  const [showGenerator, setShowGenerator] = useState(false);
 
   if (!isUnlocked) {
     return (
@@ -38,12 +36,6 @@ const AppContent: React.FC = () => {
           >
             + Add Password
           </button>
-          <button
-            onClick={() => setShowGenerator(true)}
-            className="generator-btn"
-          >
-            Generate Password
-          </button>
         </div>
 
         <PasswordList
@@ -64,10 +56,6 @@ const AppContent: React.FC = () => {
           }}
           onSave={() => {}}
         />
-      )}
-
-      {showGenerator && (
-        <PasswordGenerator onClose={() => setShowGenerator(false)} />
       )}
     </div>
   );

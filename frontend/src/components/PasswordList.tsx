@@ -17,6 +17,7 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
   const [qrCodePassword, setQrCodePassword] = useState<PasswordEntry | null>(
     null
   );
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   // Get unique categories from passwords
   const categories = Array.from(
@@ -57,6 +58,17 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
       setPasswords(passwords.filter((p) => p.id !== id));
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to delete password");
+    }
+  };
+
+  const handleCopyPassword = async (password: PasswordEntry) => {
+    try {
+      const fullPassword = await passwordsApi.get(password.id);
+      await navigator.clipboard.writeText(fullPassword.password || "");
+      setCopiedId(password.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err: any) {
+      setError("Failed to copy password");
     }
   };
 
@@ -129,13 +141,14 @@ const PasswordList: React.FC<PasswordListProps> = ({ onEdit }) => {
                     <strong>URL:</strong> {password.url}
                   </p>
                 )}
-                {password.notes && (
-                  <p>
-                    <strong>Notes:</strong> {password.notes}
-                  </p>
-                )}
               </div>
               <div className="password-actions">
+                <button
+                  onClick={() => handleCopyPassword(password)}
+                  className="copy-btn"
+                >
+                  {copiedId === password.id ? "Copied!" : "Copy"}
+                </button>
                 <button
                   onClick={() => setQrCodePassword(password)}
                   className="qrcode-btn"

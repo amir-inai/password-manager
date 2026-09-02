@@ -292,6 +292,21 @@
   background: #5a32a3;
 }
 
+.copy-btn {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+  background: #28a745;
+  color: white;
+}
+
+.copy-btn:hover {
+  background: #218838;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
@@ -391,21 +406,6 @@
 
 .toggle-password:hover {
   background: #d0d0d0;
-}
-
-.generate-password-btn {
-  padding: 0.75rem;
-  background: #17a2b8;
-  color: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-
-.generate-password-btn:hover {
-  background: #138496;
 }
 
 .form-actions {
