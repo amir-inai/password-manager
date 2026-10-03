@@ -137,6 +137,46 @@ npm run dev
 
 3. Open your browser and navigate to `http://localhost:5173`
 
+#### Option 4: Docker (recommended)
+
+Docker runs the production build: the React app is served by nginx, which
+reverse-proxies `/api` to the Go backend. The SQLite vault is stored in a
+Docker named volume so it survives rebuilds.
+
+**Prerequisites:** Docker Desktop (or Docker Engine + Compose v2).
+
+```bash
+# Build and start both services (backend + frontend)
+docker compose up --build
+```
+
+Then open `http://localhost:5173`.
+
+Useful commands:
+
+```bash
+docker compose up -d --build   # start in the background
+docker compose logs -f         # follow logs
+docker compose down            # stop containers (vault data is kept)
+docker compose down -v         # stop AND delete the vault volume
+```
+
+Or via `make`:
+
+```bash
+make docker-up     # start (http://localhost:5173)
+make docker-logs   # follow logs
+make docker-down   # stop
+```
+
+**Notes:**
+
+- Only the frontend port (`5173`) is published; the backend stays on the
+  internal Docker network and is reachable through nginx at `/api`.
+- The vault database is persisted in the `vault-data` volume at `/data/vault.db`.
+- To point the frontend at a different API base, override the build arg:
+  `docker compose build --build-arg VITE_API_URL=/api frontend`.
+
 ### First Time Setup
 
 When you first open the application, you'll be prompted to create a master password. This password will be used to encrypt all your data. **Make sure to remember it** - there's no way to recover your data if you forget it!

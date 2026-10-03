@@ -1,0 +1,18 @@
+# Database files (never bake the vault into an image)
+*.db
+*.sqlite
+*.sqlite3
+vault.db
+
+# Build artifacts
+bin/
+build/
+
+# VCS / IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# Docs
+*.md
